@@ -51,7 +51,7 @@ class App:
     def __str__(self):
         return self.name
 
-server([App("app", "hello world")])
+serve([App("app", "hello world")])
 ```
 
 ## Contributing
