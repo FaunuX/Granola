@@ -5,11 +5,11 @@ use std::{
 
 #[derive(Debug)]
 pub struct HttpRequest {
-    method: String,
-    host: String,
-    route: String,
-    version: f32,
-    stream: TcpStream,
+    pub method: String,
+    pub host: String,
+    pub route: String,
+    pub version: f32,
+    pub stream: TcpStream,
 }
 
 impl From<TcpStream> for HttpRequest {
@@ -26,13 +26,13 @@ impl From<TcpStream> for HttpRequest {
             host: http_request_data[1].split_whitespace().collect::<Vec<_>>()[1].to_string(),
             route: http_request_data[0].split_whitespace().collect::<Vec<_>>()[1].to_string(),
             version: http_request_data[0]
-                .split("/")
+                .split('/')
                 .collect::<Vec<_>>()
                 .last()
                 .expect("1.1")
                 .parse()
                 .unwrap(),
-            stream: stream,
+            stream,
         }
     }
 }

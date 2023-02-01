@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 use std::{
-    io::{prelude::*, BufReader, ErrorKind},
+    io::{ErrorKind},
     net::{TcpListener, TcpStream},
     sync::{
         atomic::{AtomicBool, Ordering},
@@ -25,7 +25,7 @@ fn run_server(listener: TcpListener, running: Arc<AtomicBool>) {
     while running.load(Ordering::SeqCst) {
         match listener.accept() {
             Ok((stream, _)) => {
-                listener.accept();
+                let _ = listener.accept();
                 handle_connection(stream);
             },
             Err(e) => {
@@ -44,7 +44,7 @@ fn run_server(listener: TcpListener, running: Arc<AtomicBool>) {
 fn serve(port: u32) {
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
-    let listener = TcpListener::bind(format!("127.0.0.1:{}", port.to_string())).unwrap();
+    let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
     listener
         .set_nonblocking(true)
         .expect("Cannot set non-blocking");
@@ -52,7 +52,7 @@ fn serve(port: u32) {
         r.store(false, Ordering::SeqCst);
     })
     .expect("Error setting Ctrl-C handler");
-    println!("TCP server started on port {}", port.to_string());
+    println!("TCP server started on port {}", port);
     run_server(listener, running)
 
 }
