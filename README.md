@@ -8,10 +8,6 @@ Our library, called "Beserk!", is designed to provide developers with a fast and
 
 With Beserk!, developers can easily define and work with objects in their web application, leveraging the power of object-oriented programming to create clean and reusable code. The library includes a variety of useful tools for working with HTTP requests and responses, including support for routing, middleware, and handling different types of content.
 
-## Why Object Oriented Programming Makes Sense for Backend Web Development:
-
-```INSERT REASON HERE```
-
 ## Features
 
 - Built for python, a popular and versatile programming language that is easy to learn and use.

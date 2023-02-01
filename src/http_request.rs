@@ -1,7 +1,7 @@
 use std::{
-    net::{TcpStream},
     io::{prelude::*, BufReader},
-}
+    net::TcpStream,
+};
 
 #[derive(Debug)]
 pub struct HttpRequest {
@@ -9,7 +9,7 @@ pub struct HttpRequest {
     host: String,
     route: String,
     version: f32,
-    stream: TcpStream
+    stream: TcpStream,
 }
 
 impl From<TcpStream> for HttpRequest {
@@ -25,9 +25,14 @@ impl From<TcpStream> for HttpRequest {
             method: http_request_data[0].split_whitespace().collect::<Vec<_>>()[0].to_string(),
             host: http_request_data[1].split_whitespace().collect::<Vec<_>>()[1].to_string(),
             route: http_request_data[0].split_whitespace().collect::<Vec<_>>()[1].to_string(),
-            version: http_request_data[0].split("/").collect::<Vec<_>>().last().expect("1.1").parse().unwrap(),
-            stream: stream
+            version: http_request_data[0]
+                .split("/")
+                .collect::<Vec<_>>()
+                .last()
+                .expect("1.1")
+                .parse()
+                .unwrap(),
+            stream: stream,
         }
-
     }
 }
