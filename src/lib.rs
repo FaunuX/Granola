@@ -1,6 +1,6 @@
 use pyo3::prelude::*;
 use std::{
-    io::{ErrorKind},
+    io::{ErrorKind, Write},
     net::{TcpListener, TcpStream},
     sync::{
         atomic::{AtomicBool, Ordering},
@@ -15,8 +15,10 @@ use http_request::HttpRequest;
 
 
 fn handle_connection(stream: TcpStream) {
-    let a = HttpRequest::from(stream);
+    let mut a = HttpRequest::from(stream);
+    let response = "HTTP/1.1 200 OK\r\n\r\n";
 
+    a.stream.write_all(response.as_bytes()).unwrap();
     println!("{:#?}", a);
 }
 
