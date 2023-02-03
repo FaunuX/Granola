@@ -7,10 +7,8 @@ use std::{
         Arc,
     },
     time::Duration,
-};
-
-mod http_request;
-use http_request::HttpRequest;
+}; 
+mod http_request; use http_request::HttpRequest;
 
 
 
@@ -23,8 +21,8 @@ fn handle_connection(stream: TcpStream) {
 }
 
 
-fn run_server(listener: TcpListener, running: Arc<AtomicBool>) {
-    while running.load(Ordering::SeqCst) {
+fn run_server(listener: TcpListener, running: &Arc<AtomicBool>) -> Option<TcpListener> {
+    if running.load(Ordering::SeqCst) {
         match listener.accept() {
             Ok((stream, _)) => {
                 let _ = listener.accept();
@@ -33,12 +31,13 @@ fn run_server(listener: TcpListener, running: Arc<AtomicBool>) {
             Err(e) => {
                 if e.kind() == ErrorKind::WouldBlock {
                     std::thread::sleep(Duration::from_millis(100));
-                    continue;
                 }; 
-                break;
             }
-        }
-    };
+        };
+        Some(listener)
+    } else {
+        None
+    }
 }
 
 
@@ -46,7 +45,7 @@ fn run_server(listener: TcpListener, running: Arc<AtomicBool>) {
 fn serve(port: u32) {
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
-    let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
+    let mut listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
     listener
         .set_nonblocking(true)
         .expect("Cannot set non-blocking");
@@ -55,7 +54,12 @@ fn serve(port: u32) {
     })
     .expect("Error setting Ctrl-C handler");
     println!("TCP server started on port {}", port);
-    run_server(listener, running)
+    loop {
+        match run_server(listener, &running) {
+            Some(Listener) => listener = Listener,
+            None => break
+        };
+    };
 
 }
 
