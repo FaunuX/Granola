@@ -1,0 +1,13 @@
+/Users/judah/Downloads/programming/granola/target/debug/deps/pyo3_build_config-8bc43cdec8e3c298.rmeta: /Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/lib.rs /Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/errors.rs /Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/impl_.rs /Users/judah/Downloads/programming/granola/target/debug/build/pyo3-build-config-69032c61c61032a9/out/pyo3-build-config-file.txt /Users/judah/Downloads/programming/granola/target/debug/build/pyo3-build-config-69032c61c61032a9/out/pyo3-build-config.txt
+
+/Users/judah/Downloads/programming/granola/target/debug/deps/libpyo3_build_config-8bc43cdec8e3c298.rlib: /Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/lib.rs /Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/errors.rs /Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/impl_.rs /Users/judah/Downloads/programming/granola/target/debug/build/pyo3-build-config-69032c61c61032a9/out/pyo3-build-config-file.txt /Users/judah/Downloads/programming/granola/target/debug/build/pyo3-build-config-69032c61c61032a9/out/pyo3-build-config.txt
+
+/Users/judah/Downloads/programming/granola/target/debug/deps/pyo3_build_config-8bc43cdec8e3c298.d: /Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/lib.rs /Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/errors.rs /Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/impl_.rs /Users/judah/Downloads/programming/granola/target/debug/build/pyo3-build-config-69032c61c61032a9/out/pyo3-build-config-file.txt /Users/judah/Downloads/programming/granola/target/debug/build/pyo3-build-config-69032c61c61032a9/out/pyo3-build-config.txt
+
+/Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/lib.rs:
+/Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/errors.rs:
+/Users/judah/.cargo/registry/src/github.com-1ecc6299db9ec823/pyo3-build-config-0.17.3/src/impl_.rs:
+/Users/judah/Downloads/programming/granola/target/debug/build/pyo3-build-config-69032c61c61032a9/out/pyo3-build-config-file.txt:
+/Users/judah/Downloads/programming/granola/target/debug/build/pyo3-build-config-69032c61c61032a9/out/pyo3-build-config.txt:
+
+# env-dep:OUT_DIR=/Users/judah/Downloads/programming/granola/target/debug/build/pyo3-build-config-69032c61c61032a9/out
