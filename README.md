@@ -19,9 +19,9 @@ With Granola, developers can easily define and work with objects in their web ap
 
 ## Installation
 
-To install Granola, you will need to have [Python](https://www.python.org/) installed on your system. Then, you can install Granola using `pip`, the Python package manager, by running the following command:
+To install Granola, you will need to have [Python](https://www.python.org/) installed on your system. Then, you can install granola using `pip`, the Python package manager, by running the following command:
 
-`pip install beserk`
+`pip install granola`
 
 ## Usage
 
