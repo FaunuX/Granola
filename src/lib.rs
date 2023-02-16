@@ -7,6 +7,7 @@ use std::{
         Arc,
     },
     time::Duration,
+    thread::sleep
 }; 
 
 mod http; 
@@ -19,16 +20,42 @@ enum ListenerResult {
     KeyboardInterrupt
 }
 
-fn handle_connection(stream: TcpStream) {
-    let mut a = Request::from(stream);
+enum RouteResult<T> {
+    SubRoute(T),
+    Failed
+}
+
+fn handle_connection(stream: TcpStream, app: &PyAny) {
+    let mut request = Request::from(stream);
+    let mut response: RouteResult<&PyAny> = RouteResult::SubRoute(app);
+    for call in request.route.split('/').take_while(|route| !route.is_empty() ) {
+        match response {
+            RouteResult::SubRoute(app) => {
+                response = match app.call_method0(call) {
+                    Ok(e) => RouteResult::SubRoute(e),
+                    Err(e) => RouteResult::Failed 
+                };
+            },
+            RouteResult::Failed => {
+                panic!();
+            }
+        }
+    };
+    let result = if let RouteResult::SubRoute(resp) = response {
+        resp.str().unwrap().to_string()
+    } else {
+        "INTERNAL SERVER ERROR".to_string()
+    };
+
     let response = Response {
         status_code: 200,
         reason: "OK".to_string(),
         content_type: "text/html".to_string(),
-        body: "<div>Aight cool</div>".to_string()
+        body: result
     }.to_string();
-    a.stream.write_all(response.as_bytes()).unwrap();
-    println!("{:#?}", a);
+
+    request.stream.write_all(response.as_bytes()).unwrap();
+    println!("{:#?}", response);
 }
 
 fn run_server(listener: &TcpListener, running: &Arc<AtomicBool>) -> ListenerResult {
@@ -36,11 +63,11 @@ fn run_server(listener: &TcpListener, running: &Arc<AtomicBool>) -> ListenerResu
         match listener.accept() {
             Ok((stream, _)) => {
                 let _ = listener.accept();
-                std::thread::sleep(Duration::from_millis(100));
+                sleep(Duration::from_millis(100));
                 ListenerResult::RequestFound(stream)
             },
             Err(e) if e.kind() == ErrorKind::WouldBlock => {
-                std::thread::sleep(Duration::from_millis(100));
+                sleep(Duration::from_millis(100));
                 ListenerResult::RequestNotFound
             },
             _ => {
@@ -63,11 +90,10 @@ fn serve(port: u32, app: &PyAny) {
     ctrlc::set_handler(move || {
         r.store(false, Ordering::SeqCst);
     }).expect("Error setting Ctrl-C handler");
-    println!("{:?}", app.hasattr("api"));
     println!("TCP server started on port {}", port);
     loop {
         match run_server(&listener, &running) {
-            ListenerResult::RequestFound(stream) => handle_connection(stream),
+            ListenerResult::RequestFound(stream) => handle_connection(stream, app),
             ListenerResult::RequestNotFound => continue,
             ListenerResult::KeyboardInterrupt => break
         };

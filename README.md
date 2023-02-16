@@ -28,7 +28,7 @@ To install Granola, you will need to have [Python](https://www.python.org/) inst
 Here is a simple example of a web server built with Granola:
 
 ```py
-# examples/example.py
+# main.py
 
 from granola import serve
 
@@ -45,7 +45,7 @@ class App:
             case _ :
                 return None
 
-serve([App("app", "Hello World")])
+serve(8685, App("Hello World"))
 
 ```
 
