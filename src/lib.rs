@@ -28,12 +28,19 @@ enum RouteResult<T> {
 fn handle_connection(stream: TcpStream, app: &PyAny) {
     let mut request = Request::from(stream);
     let mut response: RouteResult<&PyAny> = RouteResult::SubRoute(app);
-    for call in request.route.split('/').take_while(|route| !route.is_empty() ) {
+    println!("{:#?}", request.route.split('/').collect::<Vec<&str>>());
+    for call in request.route.split('/').skip_while(|route| route.is_empty()).take_while(|route| !route.is_empty() ) {
         match response {
             RouteResult::SubRoute(app) => {
                 response = match app.call_method0(call) {
-                    Ok(e) => RouteResult::SubRoute(e),
-                    Err(e) => RouteResult::Failed 
+                    Ok(e) => {
+                        println!("{:?}", e);
+                        RouteResult::SubRoute(e)
+                    },
+                    Err(_) => {
+                        RouteResult::Failed 
+                    }
+
                 };
             },
             RouteResult::Failed => {
@@ -50,7 +57,7 @@ fn handle_connection(stream: TcpStream, app: &PyAny) {
     let response = Response {
         status_code: 200,
         reason: "OK".to_string(),
-        content_type: "text/html".to_string(),
+        content_type: "application/json".to_string(),
         body: result
     }.to_string();
 
@@ -90,7 +97,7 @@ fn serve(port: u32, app: &PyAny) {
     ctrlc::set_handler(move || {
         r.store(false, Ordering::SeqCst);
     }).expect("Error setting Ctrl-C handler");
-    println!("TCP server started on port {}", port);
+    println!("TCP server started on port {}, Ctrl+C to quit", port);
     loop {
         match run_server(&listener, &running) {
             ListenerResult::RequestFound(stream) => handle_connection(stream, app),
