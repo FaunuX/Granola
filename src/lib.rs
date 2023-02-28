@@ -11,8 +11,10 @@ use std::{
 }; 
 
 mod http; 
-use http::Request;
-use http::Response;
+use http::{
+    Request,
+    Response
+};
 
 enum ListenerResult {
     RequestFound(TcpStream),
