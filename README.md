@@ -1,12 +1,6 @@
-# Granola
+# Granola:
 
-An Explosively Fast Object-Oriented Python Backend Microframework Written in Rust
-
-## Description
-
-Our library, called "Granola", is designed to provide developers with a fast and reliable way to build backend web applications in Python. It utilizes the power of the Rust programming language to provide efficient, high-performance functionality while maintaining the simplicity and ease of use of Python.
-
-With Granola, developers can easily define and work with objects in their web application, leveraging the power of object-oriented programming to create clean and reusable code. The library includes a variety of useful tools for working with HTTP requests and responses, including support for routing, middleware, and handling different types of content.
+Granola is a Python library for building apis and backend applications, with an emphasis on reusability and horizontal scaling.
 
 ## Features
 
@@ -17,15 +11,15 @@ With Granola, developers can easily define and work with objects in their web ap
 - JWT (maybe idk)
 - Automatic Markdown documentation generator for API docs with no extra effort. (maybe idk)
 
-## Installation
+## Installation:
 
-To install Granola, you will need to have [Python](https://www.python.org/) installed on your system. Then, you can install granola using `pip`, the Python package manager, by running the following command:
+you can install granola using [pip](https://pip.pypa.io/en/stable/) by running the following command:
 
-`pip install granola`
+```bash
+pip install granola.py
+```
 
-## Usage
-
-Here is a simple example of a web server built with Granola:
+## Usage:
 
 ```py
 # main.py
@@ -46,6 +40,10 @@ serve(8685, App())
 
 ```
 
-## Contributing
+## Contributing:
 
 We welcome contributions to Granola. If you have an idea for a new feature or have found a bug, please open an issue on our GitHub repository. If you would like to contribute code, please open a pull request with your changes.
+
+## License:
+
+[MIT](https://choosealicense.com/licenses/mit/)
