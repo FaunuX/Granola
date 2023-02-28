@@ -17,7 +17,7 @@ use http::Response;
 enum ListenerResult {
     RequestFound(TcpStream),
     RequestNotFound,
-    KeyboardInterrupt
+    KeyboardInterrupt 
 }
 
 enum RouteResult<T> {
@@ -25,28 +25,35 @@ enum RouteResult<T> {
     Failed
 }
 
+fn process_response(call: String, app: &PyAny) -> RouteResult<&PyAny> {
+    match app.call_method0(call.as_str()) {
+        Ok(e) => {
+            println!("{:?}", e);
+            RouteResult::SubRoute(e)
+        },
+        Err(_) => {
+            RouteResult::Failed 
+        }
+
+    }
+}
+
+fn process_request(call: String, response: RouteResult<&PyAny>) -> RouteResult<&PyAny> {
+    match response {
+        RouteResult::SubRoute(app) => {
+            return process_response(call, app);
+        },
+        RouteResult::Failed => {
+            panic!();
+        }
+    }
+}
+
 fn handle_connection(stream: TcpStream, app: &PyAny) {
     let mut request = Request::from(stream);
     let mut response: RouteResult<&PyAny> = RouteResult::SubRoute(app);
-    println!("{:#?}", request.route.split('/').collect::<Vec<&str>>());
     for call in request.route.split('/').skip_while(|route| route.is_empty()).take_while(|route| !route.is_empty() ) {
-        match response {
-            RouteResult::SubRoute(app) => {
-                response = match app.call_method0(call) {
-                    Ok(e) => {
-                        println!("{:?}", e);
-                        RouteResult::SubRoute(e)
-                    },
-                    Err(_) => {
-                        RouteResult::Failed 
-                    }
-
-                };
-            },
-            RouteResult::Failed => {
-                panic!();
-            }
-        }
+        response = process_request(call.to_string(), response);
     };
     let result = if let RouteResult::SubRoute(resp) = response {
         resp.str().unwrap().to_string()
@@ -106,7 +113,6 @@ fn serve(port: u32, app: &PyAny) {
         };
     };
 }
-
 
 #[pymodule]
 fn granola(_py: Python, m: &PyModule) -> PyResult<()> {
