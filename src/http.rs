@@ -21,17 +21,20 @@ impl From<TcpStream> for Request {
             .take_while(|line| !line.is_empty())
             .collect();
 
+        let method = http_request_data[0]
+            .split_whitespace().collect::<Vec<_>>()[0].to_string();
+        let host =  http_request_data[1]
+            .split_whitespace().collect::<Vec<_>>()[1].to_string();
+        let route =  http_request_data[0]
+            .split_whitespace().collect::<Vec<_>>()[1].to_string();
+        let version = http_request_data[0] 
+            .split('/') .collect::<Vec<_>>() .last() .expect("1.1") .parse() .unwrap();
+
         Self {
-            method: http_request_data[0].split_whitespace().collect::<Vec<_>>()[0].to_string(),
-            host: http_request_data[1].split_whitespace().collect::<Vec<_>>()[1].to_string(),
-            route: http_request_data[0].split_whitespace().collect::<Vec<_>>()[1].to_string(),
-            version: http_request_data[0]
-                .split('/')
-                .collect::<Vec<_>>()
-                .last()
-                .expect("1.1")
-                .parse()
-                .unwrap(),
+            method,
+            host,
+            route,
+            version,
             stream,
         }
     }

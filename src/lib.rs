@@ -29,13 +29,8 @@ enum RouteResult<T> {
 
 fn process_response(call: String, app: &PyAny) -> RouteResult<&PyAny> {
     match app.call_method0(call.as_str()) {
-        Ok(e) => {
-            println!("{:?}", e);
-            RouteResult::SubRoute(e)
-        },
-        Err(_) => {
-            RouteResult::Failed 
-        }
+        Ok(e) => RouteResult::SubRoute(e),
+        Err(_) => RouteResult::Failed
 
     }
 }
