@@ -11,14 +11,3 @@ class App:
         return target
 
 serve(8685, App())
-# from granola import serve
-
-# class App:
-#     def __init__(self, props):
-#         self.data = props
-
-#     def api(self):
-#         return self.data
-
-# serve(8685, App("Hello World"))
- 

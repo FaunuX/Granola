@@ -30,22 +30,19 @@ Here is a simple example of a web server built with Granola:
 ```py
 # main.py
 
-from granola import serve
+from granola import serve 
 
 class App:
-    def __init__(self, props):
-        self.data = props
+    def __str__(self):
+        return "WELCOME TO SERVER"
 
-    def api(self, request_type, q):
-        match request_type:
-            case "GET":
-                return self.props
-            case "POST":
-                return q
-            case _ :
-                return None
+    def api(self):
+        target = 0
+        for i in range(10):
+            target += i
+        return target
 
-serve(8685, App("Hello World"))
+serve(8685, App())
 
 ```
 
