@@ -68,23 +68,26 @@ fn handle_connection(stream: TcpStream, app: &PyAny) {
     request.stream.write_all(response.as_bytes()).unwrap();
     println!("{:#?}", response);
 }
+fn check_for_request(listener: &TcpListener) -> ListenerResult {
+    match listener.accept() {
+        Ok((stream, _)) => {
+            let _ = listener.accept();
+            sleep(Duration::from_millis(100));
+            ListenerResult::RequestFound(stream)
+        },
+        Err(e) if e.kind() == ErrorKind::WouldBlock => {
+            sleep(Duration::from_millis(100));
+            ListenerResult::RequestNotFound
+        },
+        _ => {
+            ListenerResult::RequestNotFound
+        }
+    }
+}
 
 fn run_server(listener: &TcpListener, running: &Arc<AtomicBool>) -> ListenerResult {
     if running.load(Ordering::SeqCst) {
-        match listener.accept() {
-            Ok((stream, _)) => {
-                let _ = listener.accept();
-                sleep(Duration::from_millis(100));
-                ListenerResult::RequestFound(stream)
-            },
-            Err(e) if e.kind() == ErrorKind::WouldBlock => {
-                sleep(Duration::from_millis(100));
-                ListenerResult::RequestNotFound
-            },
-            _ => {
-                ListenerResult::RequestNotFound
-            }
-        }
+        check_for_request(listener)
     } else {
         ListenerResult::KeyboardInterrupt
     }
