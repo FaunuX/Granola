@@ -1,3 +1,8 @@
+use pyo3::{
+    prelude::*,
+    types::*
+};
+
 use std::{
     io::{prelude::*, BufReader},
     net::TcpStream,
@@ -37,6 +42,17 @@ impl From<TcpStream> for Request {
             version,
             stream,
         }
+    }
+}
+
+impl ToPyObject for Request {
+    fn to_object(&self, py: Python<'_>) -> Py<PyAny> {
+        let dict = PyDict::new(py);
+        dict.set_item("method", &self.method);
+        dict.set_item("host", &self.host);
+        dict.set_item("route", &self.route);
+        dict.set_item("version", &self.version);
+        dict.to_object(py)
     }
 }
 
