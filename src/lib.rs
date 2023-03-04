@@ -32,7 +32,6 @@ fn process_response(call: String, request: Request, app: &PyAny) -> (RouteResult
         match app.call_method1(call.as_str(), request.clone()) {
             Ok (e) => RouteResult::SubRoute(e),
             Err(_) => RouteResult::Failed
-
         },
         request
     )
@@ -52,6 +51,7 @@ fn process_request(call: String, request: Request, response: RouteResult<&PyAny>
 fn handle_connection(mut stream: TcpStream, app: &PyAny) {
     let mut request = Request::new(&stream);
     let mut response: RouteResult<&PyAny> = RouteResult::SubRoute(app);
+    println!("{}", request.to_string());
     for call in request.clone().route.split('/').skip_while(|route| route.is_empty()).take_while(|route| !route.is_empty() ) {
         (response, request) = process_request(call.to_string(), request, response);
     };
@@ -69,7 +69,6 @@ fn handle_connection(mut stream: TcpStream, app: &PyAny) {
     }.to_string();
 
     stream.write_all(response.as_bytes()).unwrap();
-    println!("{:#?}", response);
 }
 
 fn check_for_request(listener: &TcpListener) -> ListenerResult {

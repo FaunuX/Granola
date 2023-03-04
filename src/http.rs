@@ -46,11 +46,17 @@ impl Request {
 impl IntoPy<Py<PyTuple>> for Request {
     fn into_py(self, py: Python<'_>) -> Py<PyTuple> {
         let dict = PyDict::new(py);
-        dict.set_item("method" , &self.method );
-        dict.set_item("host"   , &self.host   );
-        dict.set_item("route"  , &self.route  );
-        dict.set_item("version", &self.version);
+        dict.set_item("method" , &self.method ).unwrap();
+        dict.set_item("host"   , &self.host   ).unwrap();
+        dict.set_item("route"  , &self.route  ).unwrap();
+        dict.set_item("version", &self.version).unwrap();
         PyTuple::new(py, [dict]).into_py(py)
+    }
+}
+
+impl ToString for Request {
+    fn to_string(&self) -> String {
+        format!("{}: {} | {} | {}", self.method, self.host, self.route, self.version)
     }
 }
 
