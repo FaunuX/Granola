@@ -8,18 +8,17 @@ use std::{
     net::TcpStream,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Request {
     pub method: String,
     pub host: String,
     pub route: String,
     pub version: f32,
-    pub stream: TcpStream,
 }
 
-impl From<TcpStream> for Request {
-    fn from(stream: TcpStream) -> Self {
-        let buf_reader = BufReader::new(&stream);
+impl Request {
+    pub fn new(mut stream: &TcpStream) -> Self {
+        let buf_reader = BufReader::new(&mut stream);
         let http_request_data: Vec<_> = buf_reader
             .lines()
             .map(|result| result.unwrap())
@@ -33,26 +32,25 @@ impl From<TcpStream> for Request {
         let route =  http_request_data[0]
             .split_whitespace().collect::<Vec<_>>()[1].to_string();
         let version = http_request_data[0] 
-            .split('/') .collect::<Vec<_>>() .last() .expect("1.1") .parse() .unwrap();
+            .split('/') .collect::<Vec<_>>().last().expect("1.1").parse().unwrap();
 
         Self {
             method,
             host,
             route,
             version,
-            stream,
         }
     }
 }
 
-impl ToPyObject for Request {
-    fn to_object(&self, py: Python<'_>) -> Py<PyAny> {
+impl IntoPy<Py<PyTuple>> for Request {
+    fn into_py(self, py: Python<'_>) -> Py<PyTuple> {
         let dict = PyDict::new(py);
-        dict.set_item("method", &self.method);
-        dict.set_item("host", &self.host);
-        dict.set_item("route", &self.route);
+        dict.set_item("method" , &self.method );
+        dict.set_item("host"   , &self.host   );
+        dict.set_item("route"  , &self.route  );
         dict.set_item("version", &self.version);
-        dict.to_object(py)
+        PyTuple::new(py, [dict]).into_py(py)
     }
 }
 

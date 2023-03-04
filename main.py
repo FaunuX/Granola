@@ -4,10 +4,10 @@ class App:
     def __str__(self):
         return "WELCOME TO SERVER"
 
-    def api(self):
+    def api(self, request):
         target = 0
         for i in range(10):
             target += i
-        return target
+        return request
 
 serve(8685, App())

@@ -27,18 +27,21 @@ enum RouteResult<T> {
     Failed
 }
 
-fn process_response(call: String, app: &PyAny) -> RouteResult<&PyAny> {
-    match app.call_method0(call.as_str()) {
-        Ok(e) => RouteResult::SubRoute(e),
-        Err(_) => RouteResult::Failed
+fn process_response(call: String, request: Request, app: &PyAny) -> (RouteResult<&PyAny>, Request) {
+    (
+        match app.call_method1(call.as_str(), request.clone()) {
+            Ok (e) => RouteResult::SubRoute(e),
+            Err(_) => RouteResult::Failed
 
-    }
+        },
+        request
+    )
 }
 
-fn process_request(call: String, response: RouteResult<&PyAny>) -> RouteResult<&PyAny> {
+fn process_request(call: String, request: Request, response: RouteResult<&PyAny>) -> (RouteResult<&PyAny>, Request) {
     match response {
         RouteResult::SubRoute(app) => {
-            return process_response(call, app);
+            return process_response(call, request, app);
         },
         RouteResult::Failed => {
             panic!();
@@ -46,11 +49,11 @@ fn process_request(call: String, response: RouteResult<&PyAny>) -> RouteResult<&
     }
 }
 
-fn handle_connection(stream: TcpStream, app: &PyAny) {
-    let mut request = Request::from(stream);
+fn handle_connection(mut stream: TcpStream, app: &PyAny) {
+    let mut request = Request::new(&stream);
     let mut response: RouteResult<&PyAny> = RouteResult::SubRoute(app);
-    for call in request.route.split('/').skip_while(|route| route.is_empty()).take_while(|route| !route.is_empty() ) {
-        response = process_request(call.to_string(), response);
+    for call in request.clone().route.split('/').skip_while(|route| route.is_empty()).take_while(|route| !route.is_empty() ) {
+        (response, request) = process_request(call.to_string(), request, response);
     };
     let result = if let RouteResult::SubRoute(resp) = response {
         resp.str().unwrap().to_string()
@@ -65,9 +68,10 @@ fn handle_connection(stream: TcpStream, app: &PyAny) {
         body: result
     }.to_string();
 
-    request.stream.write_all(response.as_bytes()).unwrap();
+    stream.write_all(response.as_bytes()).unwrap();
     println!("{:#?}", response);
 }
+
 fn check_for_request(listener: &TcpListener) -> ListenerResult {
     match listener.accept() {
         Ok((stream, _)) => {
