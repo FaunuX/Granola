@@ -118,6 +118,7 @@ fn serve(port: u32, app: &PyAny) {
 }
 
 #[pymodule]
+#[pyo3(name="granola")]
 fn granola(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(serve, m)?)?;
     Ok(())
