@@ -55,8 +55,9 @@ fn handle_connection(mut stream: TcpStream, app: &PyAny) {
     for call in request.clone().route.split('/').skip_while(|route| route.is_empty()).take_while(|route| !route.is_empty() ) {
         (response, request) = process_request(call.to_string(), request, response);
     };
+
     let result = if let RouteResult::SubRoute(resp) = response {
-        resp.str().unwrap().to_string()
+        resp.str().unwrap().str().unwrap().to_string()
     } else {
         "INTERNAL SERVER ERROR".to_string()
     };
@@ -64,7 +65,7 @@ fn handle_connection(mut stream: TcpStream, app: &PyAny) {
     let response = Response {
         status_code: 200,
         reason: "OK".to_string(),
-        content_type: "text/html".to_string(),
+        content_type: "application/json".to_string(),
         body: result
     }.to_string();
 
