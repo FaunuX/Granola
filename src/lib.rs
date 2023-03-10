@@ -64,7 +64,7 @@ fn handle_connection(mut stream: TcpStream, app: &PyAny) {
     let response = Response {
         status_code: 200,
         reason: "OK".to_string(),
-        content_type: "application/json".to_string(),
+        content_type: "text/html".to_string(),
         body: result
     }.to_string();
 
