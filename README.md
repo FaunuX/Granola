@@ -1,4 +1,6 @@
-# Granola:
+<h1 align="center">
+Granola:
+</h1>
 
 Granola is a Python library for building apis and backend applications, with an emphasis on reusability and horizontal scaling.
 
