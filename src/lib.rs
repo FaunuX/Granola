@@ -57,7 +57,11 @@ fn handle_connection(mut stream: TcpStream, app: &PyAny) {
     };
 
     let result = if let RouteResult::SubRoute(resp) = response {
-        resp.str().unwrap().str().unwrap().to_string()
+        if resp.hasattr("__granola__").unwrap() {
+            resp.call_method0("__granola__").unwrap().str().unwrap().to_string()
+        } else {
+            resp.str().unwrap().to_string()
+        }
     } else {
         "INTERNAL SERVER ERROR".to_string()
     };

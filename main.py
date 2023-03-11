@@ -1,7 +1,7 @@
 from granola import serve 
 
 class App:
-    def __str__(self):
+    def __granola__(self):
         return "WELCOME TO SERVER"
 
     def api(self, request):
