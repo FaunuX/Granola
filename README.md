@@ -1,5 +1,5 @@
 <p align="center">
-<img width="128" height="128" src="Granola_Logo.png">
+<img width="256" height="256" src="Granola_Logo.png">
 </p>
 <h1 align="center">
 Granola:
