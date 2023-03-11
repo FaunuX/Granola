@@ -1,3 +1,6 @@
+<p align="center">
+<img src="Granola_Logo.png">
+</p>
 <h1 align="center">
 Granola:
 </h1>
