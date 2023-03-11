@@ -7,9 +7,6 @@ Granola is a Python library for building apis and backend applications, with an 
 - Built for python, a popular and versatile programming language that is easy to learn and use.
 - Monstrously fast performance, thanks to being written in Rust.
 - Object-Oriented, easy-to-use API for building backend applications quickly.
-- Built-in support for common web development features, such as routing and request handling.
-- JWT (maybe idk)
-- Automatic Markdown documentation generator for API docs with no extra effort. (maybe idk)
 
 ## Installation:
 
