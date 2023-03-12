@@ -24,7 +24,7 @@ you can install granola using [pip](https://pip.pypa.io/en/stable/) by running t
 ## Usage:
 
 <p align="center">
-<img width="480" height="480" src="code_snippet.png">
+<img height="480" src="code_snippet.png">
 </p>
 
 
