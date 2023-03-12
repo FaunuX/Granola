@@ -31,7 +31,15 @@ fn process_response(call: String, request: Request, app: &PyAny) -> (RouteResult
     (
         match app.call_method1(call.as_str(), request.clone()) {
             Ok (e) => RouteResult::SubRoute(e),
-            Err(_) => RouteResult::Failed
+            Err(_) => {
+                match app.call_method0(call.as_str()) {
+                    Ok (e) => RouteResult::SubRoute(e),
+                    Err(e) => {
+                        println!("error {}", e);
+                        RouteResult::Failed
+                    }
+                }
+            }
         },
         request
     )
