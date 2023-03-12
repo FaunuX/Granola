@@ -21,26 +21,12 @@ you can install granola using [pip](https://pip.pypa.io/en/stable/) by running t
 pip install granola-py
 ```
 
+<p align="center">
+<img src="code_snippet.png">
+</p>
+
 ## Usage:
 
-```py
-# main.py
-
-from granola import serve 
-
-class App:
-    def __granola__(self):
-        return "WELCOME TO SERVER"
-
-    def api(self, request):
-        target = 0
-        for i in range(10):
-            target += i
-        return request
-
-serve(8685, App())
-
-```
 
 ## Contributing:
 
