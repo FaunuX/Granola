@@ -1,5 +1,5 @@
 <p align="center">
-<img width="360" height="360" src="Granola_Logo.png">
+<img width="256" height="256" src="Granola_Logo.png">
 </p>
 <h1 align="center">
 Granola:
@@ -22,7 +22,7 @@ pip install granola-py
 ```
 
 <p align="center">
-<img src="code_snippet.png">
+<img widht="360" height="360" src="code_snippet.png">
 </p>
 
 ## Usage:
