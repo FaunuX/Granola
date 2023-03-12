@@ -10,37 +10,46 @@ Install from PyPi using the following commmand:
 
 To make a simple hello world api in Granola, use the following code:
 
-```
+```py
 # examples/hello_world.py
+
+from granola import serve
+
+class App:
+    def __granola__(self):
+        return "hello world"
+
+serve(5000, App())
+
 ```
 
 Let's go through the example line by line and explain what's going on.
 
-```python
+```py
 from granola import serve
 ```
 
 Imports the serve function from the granola package.
 
-```python
+```py
 class App:
 ```
 
 Defines the application class.
 
-```python
+```py
 def __granola__(self):
 ```
 
 Defines the application's main route.
 
-```python
+```py
 return "hello world"
 ```
 
 Returns the value "Hello World" to the client.
 
-```python
+```py
 serve(5000, App())
 ```
 
