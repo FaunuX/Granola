@@ -22,7 +22,7 @@ pip install granola-py
 ```
 
 <p align="center">
-<img widht="360" height="360" src="code_snippet.png">
+<img widht="480" height="480" src="code_snippet.png">
 </p>
 
 ## Usage:
