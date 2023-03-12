@@ -17,15 +17,16 @@ Granola is a Python library for building apis and backend applications, with an 
 
 you can install granola using [pip](https://pip.pypa.io/en/stable/) by running the following command:
 
-```bash
-pip install granola-py
-```
-
 <p align="center">
-<img widht="480" height="480" src="code_snippet.png">
+<img src="install_snippet.png">
 </p>
 
 ## Usage:
+
+<p align="center">
+<img width="480" height="480" src="code_snippet.png">
+</p>
+
 
 
 ## Contributing:
