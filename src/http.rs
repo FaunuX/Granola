@@ -56,7 +56,7 @@ impl IntoPy<Py<PyTuple>> for Request {
 
 impl ToString for Request {
     fn to_string(&self) -> String {
-        format!("{}: {} | {} | {}", self.method, self.host, self.route, self.version)
+        format!("{}: {} {} | {}", self.method, self.host, self.route, self.version)
     }
 }
 
