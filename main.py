@@ -8,7 +8,7 @@ class App:
     def __granola__(self):
         return "WELCOME TO SERVER"
 
-    def api(self, request):
+    def api(self):
         return Main()
 
 serve(8685, App())
