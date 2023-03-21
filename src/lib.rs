@@ -1,5 +1,4 @@
-use pyo3::prelude::*;
-use std::{
+use pyo3::prelude::*; use std::{
     io::{ErrorKind},
     sync::{
         atomic::{AtomicBool, Ordering},
@@ -34,11 +33,29 @@ enum RouteResult<T> {
     Failed
 }
 
+fn is_valid_json(json: &RouteResult<&PyAny>) -> bool {
+    let final_json = match json {
+        RouteResult::Failed => return false,
+        RouteResult::SubRoute(resp) => {
+            if resp.hasattr("__granola__").unwrap() {
+                resp.call_method0("__granola__").unwrap()
+            } else {
+                resp
+            }
+        }
+    };
+    println!("{:?}", final_json.get_type().name());
+    match final_json.get_type().name() {
+        Ok("str") => false,
+        _ => true,
+    }
+}
+
 fn process_response(call: String, request: Request, app: &PyAny) -> (RouteResult<&PyAny>, Request) {
     (
         match app.call_method1(call.as_str(), request.clone()) {
             Ok (e) => RouteResult::SubRoute(e),
-            Err(e) => {
+            Err(_) => {
                 match app.call_method0(call.as_str()) {
                     Ok (e) => RouteResult::SubRoute(e),
                     Err(e) => {
@@ -63,7 +80,7 @@ fn process_request(call: String, request: Request, response: RouteResult<&PyAny>
     }
 }
 
-fn handle_connection(mut stream: Stream, app: &PyAny) {
+fn handle_connection(stream: Stream, app: &PyAny) {
     let mut request = Request::new(&stream);
     let mut response: RouteResult<&PyAny> = RouteResult::SubRoute(app);
     println!("{}", request.to_string());
@@ -81,10 +98,15 @@ fn handle_connection(mut stream: Stream, app: &PyAny) {
         "INTERNAL SERVER ERROR".to_string()
     };
 
+    let content_type = match is_valid_json(&response) {
+        true => "application/json".to_string(),
+        false => "text/html".to_string()
+    };
+
     let response = Response {
         status_code: 200,
         reason: "OK".to_string(),
-        content_type: "application/json".to_string(),
+        content_type,
         body: result
     }.to_string();
 
