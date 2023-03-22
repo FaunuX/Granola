@@ -1,7 +1,5 @@
-use pyo3::prelude::*;
-use std::{
-    io::{ErrorKind, Write},
-    net::{TcpListener, TcpStream},
+use pyo3::prelude::*; use std::{
+    io::{ErrorKind},
     sync::{
         atomic::{AtomicBool, Ordering},
         Arc,
@@ -16,8 +14,16 @@ use http::{
     Response
 };
 
+mod net; 
+use net::{
+    Listener,
+    Stream,
+    Requesting,
+    Serving
+};
+
 enum ListenerResult {
-    RequestFound(TcpStream),
+    RequestFound(Stream),
     RequestNotFound,
     KeyboardInterrupt 
 }
@@ -27,15 +33,33 @@ enum RouteResult<T> {
     Failed
 }
 
+fn is_valid_json(json: &RouteResult<&PyAny>) -> bool {
+    let final_json = match json {
+        RouteResult::Failed => return false,
+        RouteResult::SubRoute(resp) => {
+            if resp.hasattr("__granola__").unwrap() {
+                resp.call_method0("__granola__").unwrap()
+            } else {
+                resp
+            }
+        }
+    };
+    println!("{:?}", final_json.get_type().name());
+    match final_json.get_type().name() {
+        Ok("str") => false,
+        _ => true,
+    }
+}
+
 fn process_response(call: String, request: Request, app: &PyAny) -> (RouteResult<&PyAny>, Request) {
     (
         match app.call_method1(call.as_str(), request.clone()) {
             Ok (e) => RouteResult::SubRoute(e),
-            Err(e) => {
+            Err(_) => {
                 match app.call_method0(call.as_str()) {
                     Ok (e) => RouteResult::SubRoute(e),
                     Err(e) => {
-                        println!("error {}", e);
+                        println!("{}", e);
                         RouteResult::Failed
                     }
                 }
@@ -56,7 +80,7 @@ fn process_request(call: String, request: Request, response: RouteResult<&PyAny>
     }
 }
 
-fn handle_connection(mut stream: TcpStream, app: &PyAny) {
+fn handle_connection(stream: Stream, app: &PyAny) {
     let mut request = Request::new(&stream);
     let mut response: RouteResult<&PyAny> = RouteResult::SubRoute(app);
     println!("{}", request.to_string());
@@ -74,19 +98,24 @@ fn handle_connection(mut stream: TcpStream, app: &PyAny) {
         "INTERNAL SERVER ERROR".to_string()
     };
 
+    let content_type = match is_valid_json(&response) {
+        true => "application/json".to_string(),
+        false => "text/html".to_string()
+    };
+
     let response = Response {
         status_code: 200,
         reason: "OK".to_string(),
-        content_type: "application/json".to_string(),
+        content_type,
         body: result
     }.to_string();
 
-    stream.write_all(response.as_bytes()).unwrap();
+    stream.respond(response).unwrap();
 }
 
-fn check_for_request(listener: &TcpListener) -> ListenerResult {
-    match listener.accept() {
-        Ok((stream, _)) => {
+fn check_for_request(listener: &Listener) -> ListenerResult {
+    match listener.check_for_requests() {
+        Ok(stream) => {
             let _ = listener.accept();
             sleep(Duration::from_millis(100));
             ListenerResult::RequestFound(stream)
@@ -101,7 +130,7 @@ fn check_for_request(listener: &TcpListener) -> ListenerResult {
     }
 }
 
-fn run_server(listener: &TcpListener, running: &Arc<AtomicBool>) -> ListenerResult {
+fn run_server(listener: &Listener, running: &Arc<AtomicBool>) -> ListenerResult {
     if running.load(Ordering::SeqCst) {
         check_for_request(listener)
     } else {
@@ -113,10 +142,7 @@ fn run_server(listener: &TcpListener, running: &Arc<AtomicBool>) -> ListenerResu
 fn serve(port: u32, app: &PyAny) {
     let running = Arc::new(AtomicBool::new(true));
     let r = running.clone();
-    let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
-    listener
-        .set_nonblocking(true)
-        .expect("Cannot set non-blocking");
+    let listener = Listener::connect(format!("127.0.0.1:{}", port));
     ctrlc::set_handler(move || {
         r.store(false, Ordering::SeqCst);
     }).expect("Error setting Ctrl-C handler");
