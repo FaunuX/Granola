@@ -32,7 +32,7 @@ dependencies = [
 
 [[package]]
 name = "granola"
-version = "0.2.5"
+version = "1.0.1"
 dependencies = [
  "ctrlc",
  "pyo3",

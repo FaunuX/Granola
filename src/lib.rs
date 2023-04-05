@@ -44,7 +44,6 @@ fn is_valid_json(json: &RouteResult<&PyAny>) -> bool {
             }
         }
     };
-    println!("{:?}", final_json.get_type().name());
     match final_json.get_type().name() {
         Ok("str") => false,
         _ => true,
