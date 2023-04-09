@@ -12,9 +12,8 @@ use std::{
 pub struct Request {
     pub method: String,
     pub host: String,
-    pub route: String,
+        pub route: String,
     pub version: f32,
-    pub body: String,
 }
 
 impl Request {
@@ -34,14 +33,12 @@ impl Request {
             .split_whitespace().collect::<Vec<_>>()[1].to_string();
         let version = http_request_data[0] 
             .split('/').collect::<Vec<_>>().last().expect("1.1").parse().unwrap();
-        let body = http_request_data.last().unwrap().to_string();
 
         Self {
             method,
             host,
             route,
             version,
-            body
         }
     }
 }
@@ -53,7 +50,6 @@ impl IntoPy<Py<PyTuple>> for Request {
         dict.set_item("host"   , &self.host   ).unwrap();
         dict.set_item("route"  , &self.route  ).unwrap();
         dict.set_item("version", &self.version).unwrap();
-        dict.set_item("body", &self.body).unwrap();
         PyTuple::new(py, [dict]).into_py(py)
     }
 }

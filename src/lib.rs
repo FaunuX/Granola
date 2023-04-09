@@ -33,6 +33,13 @@ enum RouteResult<T> {
     Failed
 }
 
+fn extract_path_from_url(url: &str) -> &str {
+    match url.find('?') {
+        Some(index) => &url[..index],
+        None => url,
+    }
+}
+
 fn is_valid_json(json: &RouteResult<&PyAny>) -> bool {
     let final_json = match json {
         RouteResult::Failed => return false,
@@ -83,7 +90,7 @@ fn handle_connection(stream: Stream, app: &PyAny) {
     let mut request = Request::new(&stream);
     let mut response: RouteResult<&PyAny> = RouteResult::SubRoute(app);
     println!("{}", request.to_string());
-    for call in request.clone().route.split('/').skip_while(|route| route.is_empty()).take_while(|route| !route.is_empty() ) {
+    for call in extract_path_from_url(&request.clone().route).split('/').skip_while(|route| route.is_empty()).take_while(|route| !route.is_empty() ) {
         (response, request) = process_request(call.to_string(), request, response);
     };
 
