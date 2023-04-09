@@ -90,8 +90,8 @@ fn handle_connection(stream: Stream, app: &PyAny) {
     let mut request = Request::new(&stream);
     let mut response: RouteResult<&PyAny> = RouteResult::SubRoute(app);
     println!("{}", request.to_string());
-    for call in extract_path_from_url(&request.clone().route).split('/').skip_while(|route| route.is_empty()).take_while(|route| !route.is_empty() ) {
-        (response, request) = process_request(call.to_string(), request, response);
+    for call in request.clone().route.split('/').skip_while(|route| route.is_empty()).take_while(|route| !route.is_empty() ) {
+        (response, request) = process_request(extract_path_from_url(call).to_string(), request, response);
     };
 
     let result = if let RouteResult::SubRoute(resp) = response {
