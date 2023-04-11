@@ -1,5 +1,6 @@
-use pyo3::prelude::*; use std::{
-    io::{ErrorKind},
+use pyo3::prelude::*; 
+use std::{
+    io::{Error, ErrorKind},
     sync::{
         atomic::{AtomicBool, Ordering},
         Arc,
@@ -61,13 +62,18 @@ fn process_response(call: String, request: Request, app: &PyAny) -> (RouteResult
     (
         match app.call_method1(call.as_str(), request.clone()) {
             Ok (e) => RouteResult::SubRoute(e),
-            Err(_) => {
-                match app.call_method0(call.as_str()) {
-                    Ok (e) => RouteResult::SubRoute(e),
-                    Err(e) => {
-                        println!("{}", e);
-                        RouteResult::Failed
+            Err(e) => {
+                println!("{}", e);
+                if Error::from(e).to_string() == format!("TypeError: {}.{} missing 1 required argument", app.get_type().name().unwrap(), call) { 
+                    match app.call_method0(call.as_str()) {
+                        Ok (e) => RouteResult::SubRoute(e),
+                        Err(e) => {
+                            println!("{}", e);
+                            RouteResult::Failed
+                        }
                     }
+                } else {
+                    RouteResult::Failed
                 }
             }
         },
