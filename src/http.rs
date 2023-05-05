@@ -12,7 +12,7 @@ use std::{
 pub struct Request {
     pub method: String,
     pub host: String,
-        pub route: String,
+    pub route: String,
     pub version: f32,
 }
 
