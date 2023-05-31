@@ -1,4 +1,5 @@
 from granola import serve 
+import asyncio
 
 class Main:
     def main(self):
@@ -11,4 +12,7 @@ class App:
     def api(self):
         return Main()
 
-serve(8685, App())
+async def main():
+    await serve(8685, App())
+
+asyncio.run(main())

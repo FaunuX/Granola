@@ -9,6 +9,9 @@ name = "granola"
 crate-type = ["cdylib"]
 
 [dependencies]
-ctrlc = "3.2.5"
-pyo3 = { version = "0.17.3", features = ["extension-module"] }
-mio = { version = "0.8", features = ["net", "os-poll"] }
+pyo3 = { version = "0.14", features = ["extension-module"] }
+hyper = { version = "1.0.0-rc.3", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
+http-body-util = "0.1.0-rc.2" 
+pyo3-asyncio = { version = "0.14", features = ["attributes", "tokio-runtime"] }
+async-trait = "0.1.68"
